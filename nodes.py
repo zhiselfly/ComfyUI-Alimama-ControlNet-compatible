@@ -87,7 +87,7 @@ class SD3AlimamaInpaintControlNetApplyAdvanced:
         control_hint = vae.encode(image.movedim(1, -1))
 
         mask = 1. - torch.nn.functional.interpolate(
-            mask[:, None, :, :], size=(control_hint.shape[-1], control_hint.shape[-2]), mode='bilinear'
+            mask[:, None, :, :], size=(control_hint.shape[-1], control_hint.shape[-2])
         )
         control_hint = torch.cat([control_hint, mask], dim=1)
 
