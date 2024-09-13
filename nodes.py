@@ -78,17 +78,19 @@ class SD3AlimamaInpaintControlNetApplyAdvanced:
 
         image = image.clone().movedim(-1, 1)
         mask4img = mask[:, None, :, :]
-        mask4img = torch.nn.functional.interpolate(
-            mask4img, size=(image.shape[-1], image.shape[-2])
-        )
-        mask4img = mask4img.repeat(1, image.shape[1], 1, 1)
+        if mask4img.shape[-1] != image.shape[-1] or mask4img.shape[-2] != image.shape[-2]:
+            mask4img = torch.nn.functional.interpolate(
+                mask4img, size=(image.shape[-1], image.shape[-2])
+            )
+        mask4input_img = mask4img.repeat(1, image.shape[1], 1, 1)
 
-        image[mask4img > 0.5] = 0
+        image[mask4input_img > 0.5] = 0
         control_hint = vae.encode(image.movedim(1, -1))
 
-        mask = 1. - torch.nn.functional.interpolate(
-            mask[:, None, :, :], size=(control_hint.shape[-1], control_hint.shape[-2])
+        mask_hint = torch.nn.functional.interpolate(
+            mask4img, size=(control_hint.shape[-1], control_hint.shape[-2])
         )
+        mask = 1. - mask_hint
         control_hint = torch.cat([control_hint, mask], dim=1)
 
         cnets = {}
