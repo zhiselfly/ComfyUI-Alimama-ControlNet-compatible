@@ -14,7 +14,7 @@ def load_controlnet_mmdit(sd):
         extra_cond_channels = sd['pos_embed_input.proj.weight'].shape[1] - sd['pos_embed.proj.weight'].shape[1]
         extra_cond_channels = extra_cond_channels if extra_cond_channels > 0 else 0
     new_sd = comfy.model_detection.convert_diffusers_mmdit(sd, "")
-    # The new version of ComfyUI's controlnet_config returns 5 parameters
+    # The new version of ComfyUI's controlnet_config returns 6 parameters
     control_net_config = comfy.controlnet.controlnet_config(new_sd)
     control_net_config_len = len(control_net_config)
     if control_net_config_len == 5:
