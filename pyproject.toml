@@ -1,0 +1,14 @@
+[project]
+name = "comfyui-alimama-controlnet-compatible"
+description = "Compatible with alimama's SD3-ControlNet Demo on ComfyUI."
+version = "1.0.0"
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/zhiselfly/ComfyUI-Alimama-ControlNet-compatible"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI-Alimama-ControlNet-compatible"
+Icon = ""
