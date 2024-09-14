@@ -14,7 +14,24 @@ def load_controlnet_mmdit(sd):
         extra_cond_channels = sd['pos_embed_input.proj.weight'].shape[1] - sd['pos_embed.proj.weight'].shape[1]
         extra_cond_channels = extra_cond_channels if extra_cond_channels > 0 else 0
     new_sd = comfy.model_detection.convert_diffusers_mmdit(sd, "")
-    model_config, operations, load_device, unet_dtype, manual_cast_dtype = comfy.controlnet.controlnet_config(new_sd)
+    # The new version of ComfyUI's controlnet_config returns 5 parameters
+    control_net_config = comfy.controlnet.controlnet_config(new_sd)
+    control_net_config_len = len(control_net_config)
+    if control_net_config_len == 5:
+        model_config, operations, load_device, unet_dtype, manual_cast_dtype = control_net_config
+        offload_device = load_device
+    elif control_net_config_len == 6:
+        model_config, operations, load_device, unet_dtype, manual_cast_dtype, offload_device = control_net_config
+    elif control_net_config_len > 6:
+        model_config = control_net_config[0]
+        operations = control_net_config[1]
+        load_device = control_net_config[2]
+        unet_dtype = control_net_config[3]
+        manual_cast_dtype = control_net_config[4]
+        offload_device = control_net_config[5]
+    else:
+        raise Excetion('Your version of ComfyUI is either too old or too new')
+
     num_blocks = comfy.model_detection.count_blocks(new_sd, 'joint_blocks.{}.')
     for k in sd:
         new_sd[k] = sd[k]
